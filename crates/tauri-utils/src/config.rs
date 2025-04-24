@@ -836,6 +836,7 @@ pub struct NsisConfig {
   /// The path to a bitmap file to display on the header of installers pages.
   ///
   /// The recommended dimensions are 150px x 57px.
+  pub out_file: Option<String>,
   #[serde(alias = "header-image")]
   pub header_image: Option<PathBuf>,
   /// The path to a bitmap file for the Welcome page and the Finish page.
