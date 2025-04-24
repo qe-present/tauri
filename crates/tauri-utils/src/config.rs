@@ -833,6 +833,9 @@ impl Default for NSISInstallerMode {
 pub struct NsisConfig {
   /// A custom .nsi template to use.
   pub template: Option<PathBuf>,
+  /// The name of the installer executable.
+  /// for example setup.exe or myapp-installer.exe.
+  pub out_file: Option<String>,
   /// The path to a bitmap file to display on the header of installers pages.
   ///
   /// The recommended dimensions are 150px x 57px.
