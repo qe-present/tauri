@@ -429,6 +429,9 @@ pub struct WixSettings {
 pub struct NsisSettings {
   /// A custom .nsi template to use.
   pub template: Option<PathBuf>,
+  /// The path to the output NSIS installer file.
+  /// for example setup.exe, or setup-x64.exe.
+  pub output_file: Option<String>,
   /// The path to a bitmap file to display on the header of installers pages.
   ///
   /// The recommended dimensions are 150px x 57px.

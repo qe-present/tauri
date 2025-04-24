@@ -20,7 +20,6 @@ use crate::{
   Settings,
 };
 use tauri_utils::display_path;
-
 use anyhow::Context;
 use handlebars::{to_json, Handlebars};
 use tauri_utils::config::{NSISInstallerMode, NsisCompression, WebviewInstallMode};
@@ -317,6 +316,8 @@ fn build_nsis_app_installer(
     .as_ref()
     .map(|n| n.install_mode)
     .unwrap_or(NSISInstallerMode::CurrentUser);
+  let mut out_file="nsis-output.exe";
+  let mut render_out_file=false;
 
   if let Some(nsis) = nsis {
     if let Some(installer_icon) = &nsis.installer_icon {
@@ -349,6 +350,14 @@ fn build_nsis_app_installer(
       data.insert(
         "minimum_webview2_version",
         to_json(minimum_webview2_version),
+      );
+    }
+    if let Some(output_file_setting) = &nsis.output_file {
+      render_out_file=true;
+      out_file=output_file_setting;
+      data.insert(
+        "output_file",
+        to_json(output_file_setting),
       );
     }
   }
@@ -425,8 +434,8 @@ fn build_nsis_app_installer(
   data.insert("main_binary_name", to_json(main_binary.name()));
   data.insert("main_binary_path", to_json(&main_binary_path));
 
-  let out_file = "nsis-output.exe";
-  data.insert("out_file", to_json(out_file));
+
+
 
   let resources = generate_resource_data(settings)?;
   let resources_dirs =
@@ -588,7 +597,9 @@ fn build_nsis_app_installer(
     settings.version_string(),
     arch,
   );
-
+  if !render_out_file{
+    data.insert("output_file",to_json(out_file));
+  }
   let nsis_output_path = output_path.join(out_file);
   let nsis_installer_path = settings.project_out_directory().to_path_buf().join(format!(
     "bundle/{}/{}.exe",
@@ -638,7 +649,7 @@ fn build_nsis_app_installer(
     .current_dir(output_path)
     .piped()
     .context("error running makensis.exe")?;
-
+  
   fs::rename(nsis_output_path, &nsis_installer_path)?;
 
   if settings.can_sign() {
